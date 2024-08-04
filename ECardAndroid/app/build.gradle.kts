@@ -55,6 +55,11 @@ dependencies {
     // compose navigation
     implementation(libs.androidx.navigation.compose)
 
+    // koin
+    val koinVersion = "3.5.4"
+    implementation(libs.insert.koin.koin.android)
+    implementation(libs.insert.koin.koin.androidx.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
