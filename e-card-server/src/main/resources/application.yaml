@@ -1,0 +1,15 @@
+ktor:
+    application:
+        modules:
+            - example.com.ApplicationKt.module
+    deployment:
+        port: 8080
+jwt:
+  domain: "https://jwt-provider-domain/"
+  audience: "jwt-audience"
+  realm: "ktor sample app"
+  secret: "secret"
+db:
+  url: "jdbc:postgresql://db:5432/ktor_db"
+  user: "myuser"
+  password: "mypassword"
