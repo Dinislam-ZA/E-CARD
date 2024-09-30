@@ -50,6 +50,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     val navVersion = "2.7.7"
 
     // compose navigation
@@ -59,6 +63,17 @@ dependencies {
     val koinVersion = "3.5.4"
     implementation(libs.insert.koin.koin.android)
     implementation(libs.insert.koin.koin.androidx.compose)
+
+    //ktor
+    val ktor_version = "2.3.12"
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+
+    //shared preference
+    implementation(libs.androidx.security.crypto)
+
+    //glide
+    implementation(libs.github.glide)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
