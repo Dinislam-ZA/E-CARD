@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 abstract class MVIBaseViewModel<T, S>(private val initialState: S) : ViewModel() {
 
-    private val _state = MutableStateFlow<S>(initialState)
+    protected val _state = MutableStateFlow<S>(initialState)
     val state = _state.asStateFlow()
 
     abstract fun eventHandler(event: T)

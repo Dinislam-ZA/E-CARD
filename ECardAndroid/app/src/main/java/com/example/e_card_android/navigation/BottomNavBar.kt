@@ -28,11 +28,6 @@ fun BottomNavigationBar(navController: NavHostController) {
             Routes.HOME.value
         ),
         NavigationItem(
-            stringResource(R.string.nav_game_label),
-            Icons.Rounded.Add,
-            Routes.GAME.value
-        ),
-        NavigationItem(
             stringResource(R.string.nav_settings_label),
             Icons.Rounded.Settings,
             Routes.SETTINGS.value

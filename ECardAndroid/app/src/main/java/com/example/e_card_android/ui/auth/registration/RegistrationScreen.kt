@@ -9,12 +9,16 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.e_card_android.R
+import com.example.e_card_android.ui.common.composables.ErrorAlertDialog
 import com.example.e_card_android.ui.common.composables.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,8 +30,15 @@ fun RegistrationScreen(
     val state = viewModel.state.collectAsState()
     val uiData = viewModel.uiData.collectAsState()
 
+    val openAlertDialog = remember { mutableStateOf(false) }
+
     when(state.value){
-        is RegistrationScreenState.Error -> RegistrationScreenErrorState()
+        is RegistrationScreenState.Error ->{
+            openAlertDialog.value = true
+            RegistrationScreenErrorState(openAlertDialog, onConfirmation = {
+                viewModel.eventHandler(RegistrationScreenEvent.TryAgain)
+            })
+        }
         RegistrationScreenState.Idle -> RegistrationScreenIdleState(
             uiData = uiData.value,
             eventHandler = {
@@ -80,6 +91,12 @@ fun RegistrationScreenIdleState(
 }
 
 @Composable
-fun RegistrationScreenErrorState(){
-
+fun RegistrationScreenErrorState(openAlertDialog: MutableState<Boolean>, onConfirmation: () -> Unit) {
+    if (openAlertDialog.value){
+        ErrorAlertDialog(
+            dialogTitle = "Registration error",
+            dialogText = "Error while registration was occured. Check yout internet connection and try again",
+            onConfirmation = onConfirmation
+        )
+    }
 }

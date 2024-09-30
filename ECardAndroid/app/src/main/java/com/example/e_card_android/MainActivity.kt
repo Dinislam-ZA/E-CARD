@@ -1,5 +1,6 @@
 package com.example.e_card_android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.e_card_android.navigation.BottomNavigationBar
+import com.example.e_card_android.navigation.MainNavigation
 import com.example.e_card_android.ui.theme.ECardAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +23,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ECardAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Main screen",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController) }
+                ) { innerPadding ->
+                    MainNavigation(navController, innerPadding)
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Welcome to the $name!",
-        modifier = modifier
-    )
-}
+    private fun goToAuthActivity(){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ECardAndroidTheme {
-        Greeting("Android")
+    private fun goToGameActivity(){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 }

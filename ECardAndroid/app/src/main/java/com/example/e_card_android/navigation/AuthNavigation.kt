@@ -19,7 +19,7 @@ fun AuthNavigation(onSucceedLogin: () -> Unit) {
         )}
         composable(Routes.REGISTER.value) { RegistrationScreen(
             onSucceedRegistration = {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         ) }
     }

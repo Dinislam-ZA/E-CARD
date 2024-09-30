@@ -2,16 +2,21 @@ package com.example.e_card_android.ui.auth.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.e_card_android.data.interactors.AuthInteractor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(val authInteractor: AuthInteractor) : ViewModel() {
 
     private val _state = MutableStateFlow<LoginScreenState>(LoginScreenState.Idle)
     val state : StateFlow<LoginScreenState> = _state.asStateFlow()
 
-    private val _uiFields = MutableStateFlow<LoginScreenUIData>(LoginScreenUIData())
+    private val _uiFields = MutableStateFlow(LoginScreenUIData())
     val uiFields = _uiFields.asStateFlow()
 
     fun handleEvents(event: LoginScreenEvent){
@@ -19,6 +24,7 @@ class LoginViewModel : ViewModel() {
             is LoginScreenEvent.EnterPassword -> updatePasswordField(event.text)
             is LoginScreenEvent.EnterUsername -> updateUsernameField(event.text)
             LoginScreenEvent.TryLogin -> tryLogin()
+            LoginScreenEvent.TryAgain -> _state.value = LoginScreenState.Idle
         }
     }
 
@@ -31,6 +37,15 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun tryLogin(){
-        Log.d("tryLogin()", "${state.value}")
+        viewModelScope.launch {
+            try {
+                _state.value = LoginScreenState.Loading
+                delay(3000)
+                _state.value = LoginScreenState.Success
+            }
+            catch (_: Exception){
+                _state.value = LoginScreenState.Error("")
+            }
+        }
     }
 }

@@ -14,10 +14,13 @@
         android:theme="@style/Theme.ECardAndroid"
         tools:targetApi="31">
         <activity
+            android:name=".ui.main.gamescreen.GameActivity"
+            android:exported="false" />
+        <activity
             android:name=".AuthActivity"
             android:exported="true"
             android:label="@string/title_activity_auth"
-            android:theme="@style/Theme.ECardAndroid" >
+            android:theme="@style/Theme.ECardAndroid">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +31,7 @@
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ECardAndroid"/>
+            android:theme="@style/Theme.ECardAndroid" />
     </application>
 
 </manifest>
