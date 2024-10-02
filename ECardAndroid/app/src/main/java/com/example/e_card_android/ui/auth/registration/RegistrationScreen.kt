@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -20,31 +20,41 @@ import androidx.compose.ui.unit.dp
 import com.example.e_card_android.R
 import com.example.e_card_android.ui.common.composables.ErrorAlertDialog
 import com.example.e_card_android.ui.common.composables.LoadingState
+import com.example.e_card_android.ui.common.composables.PasswordTextField
+import com.example.e_card_android.ui.common.viewmodel.FieldState
+import com.example.e_card_android.ui.common.viewmodel.FieldValidationState
 import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun RegistrationScreen(
     viewModel: RegistrationViewModel = koinViewModel(),
     onSucceedRegistration: () -> Unit
-){
+) {
     val state = viewModel.state.collectAsState()
-    val uiData = viewModel.uiData.collectAsState()
 
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    when(state.value){
-        is RegistrationScreenState.Error ->{
+    when (state.value) {
+        is RegistrationScreenState.Error -> {
             openAlertDialog.value = true
-            RegistrationScreenErrorState(openAlertDialog, onConfirmation = {
+            RegistrationScreenErrorState(
+                openAlertDialog = openAlertDialog,
+                errorText = (state.value as RegistrationScreenState.Error).message,
+                onConfirmation = {
                 viewModel.eventHandler(RegistrationScreenEvent.TryAgain)
             })
         }
+
         RegistrationScreenState.Idle -> RegistrationScreenIdleState(
-            uiData = uiData.value,
+            viewModel.username,
+            viewModel.password,
+            viewModel.repeatPassword,
             eventHandler = {
                 viewModel.eventHandler(it)
             },
         )
+
         RegistrationScreenState.Loading -> LoadingState()
         RegistrationScreenState.Success -> onSucceedRegistration()
     }
@@ -52,34 +62,48 @@ fun RegistrationScreen(
 
 @Composable
 fun RegistrationScreenIdleState(
-    uiData: RegistrationScreenUIData,
+    username: FieldState,
+    password: FieldState,
+    repeatPassword: FieldState,
     eventHandler: (RegistrationScreenEvent) -> Unit,
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        TextField(
-            value = uiData.username,
+        OutlinedTextField(
+            label = { Text(stringResource(R.string.username_label)) },
+            value = username.value,
+            supportingText = {
+                if (username.error is FieldValidationState.Error)
+                    Text(username.error.message)
+            },
+            isError = username.error !is FieldValidationState.Valid,
             onValueChange = {
                 eventHandler(RegistrationScreenEvent.EnterUsername(it))
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(
-            value = uiData.password,
-            onValueChange = {
+        PasswordTextField(
+            password = password.value,
+            supportingText = if (password.error is FieldValidationState.Error) password.error.message else "",
+            isError = password.error !is FieldValidationState.Valid,
+            onPasswordChange = {
                 eventHandler(RegistrationScreenEvent.EnterPassword(it))
-            }
+            },
+            label = stringResource(R.string.password)
         )
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(
-            value = uiData.repeatPassword,
-            onValueChange = {
+        PasswordTextField(
+            password = repeatPassword.value,
+            supportingText = if (repeatPassword.error is FieldValidationState.Error) repeatPassword.error.message else "",
+            isError = repeatPassword.error !is FieldValidationState.Valid,
+            onPasswordChange = {
                 eventHandler(RegistrationScreenEvent.EnterRepeatedPassword(it))
-            }
+            },
+            label = stringResource(R.string.repeat_password)
         )
         Spacer(modifier = Modifier.height(24.dp))
         OutlinedButton(onClick = {
@@ -91,11 +115,15 @@ fun RegistrationScreenIdleState(
 }
 
 @Composable
-fun RegistrationScreenErrorState(openAlertDialog: MutableState<Boolean>, onConfirmation: () -> Unit) {
-    if (openAlertDialog.value){
+fun RegistrationScreenErrorState(
+    openAlertDialog: MutableState<Boolean>,
+    errorText: String,
+    onConfirmation: () -> Unit
+) {
+    if (openAlertDialog.value) {
         ErrorAlertDialog(
             dialogTitle = "Registration error",
-            dialogText = "Error while registration was occured. Check yout internet connection and try again",
+            dialogText = errorText,
             onConfirmation = onConfirmation
         )
     }

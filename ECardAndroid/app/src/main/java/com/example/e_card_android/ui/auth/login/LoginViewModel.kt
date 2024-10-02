@@ -1,25 +1,23 @@
 package com.example.e_card_android.ui.auth.login
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_card_android.data.interactors.AuthInteractor
+import com.example.e_card_android.ui.common.viewmodel.MVIBaseViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel(val authInteractor: AuthInteractor) : ViewModel() {
+class LoginViewModel(private val authInteractor: AuthInteractor) : MVIBaseViewModel<LoginScreenEvent, LoginScreenState>(LoginScreenState.Idle) {
 
-    private val _state = MutableStateFlow<LoginScreenState>(LoginScreenState.Idle)
-    val state : StateFlow<LoginScreenState> = _state.asStateFlow()
+    var username by mutableStateOf("")
+        private set
 
-    private val _uiFields = MutableStateFlow(LoginScreenUIData())
-    val uiFields = _uiFields.asStateFlow()
+    var password by mutableStateOf("")
+        private set
 
-    fun handleEvents(event: LoginScreenEvent){
+    override fun eventHandler(event: LoginScreenEvent) {
         when (event){
             is LoginScreenEvent.EnterPassword -> updatePasswordField(event.text)
             is LoginScreenEvent.EnterUsername -> updateUsernameField(event.text)
@@ -29,11 +27,11 @@ class LoginViewModel(val authInteractor: AuthInteractor) : ViewModel() {
     }
 
     private fun updateUsernameField(text: String){
-        _uiFields.value = _uiFields.value.copy(username = text)
+        username = text
     }
 
     private fun updatePasswordField(text: String){
-        _uiFields.value = _uiFields.value.copy(password = text)
+        password = text
     }
 
     private fun tryLogin(){

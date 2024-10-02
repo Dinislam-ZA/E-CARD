@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.e_card_android.R
 import com.example.e_card_android.ui.common.composables.ErrorAlertDialog
 import com.example.e_card_android.ui.common.composables.LoadingState
+import com.example.e_card_android.ui.common.composables.PasswordTextField
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -32,19 +34,19 @@ fun LoginScreen(
     onSucceedLogin: () -> Unit,
 ) {
     val state = viewModel.state.collectAsState()
-    val uiData = viewModel.uiFields.collectAsState()
 
     val openAlertDialog = remember { mutableStateOf(false) }
     when (state.value) {
         is LoginScreenState.Error -> LoginErrorStateScreen(
             openAlertDialog,
             onConfirmation = {
-                viewModel.handleEvents(LoginScreenEvent.TryAgain)
+                viewModel.eventHandler(LoginScreenEvent.TryAgain)
             })
         is LoginScreenState.Idle -> LoginIdleStateScreen(
-            uiData.value,
+            viewModel.username,
+            viewModel.password,
             eventHandler = {
-                viewModel.handleEvents(it)
+                viewModel.eventHandler(it)
             },
             onRegisterButtonClick = onRegisterButtonClick
         )
@@ -56,7 +58,8 @@ fun LoginScreen(
 
 @Composable
 private fun LoginIdleStateScreen(
-    uiData: LoginScreenUIData,
+    username: String,
+    password: String,
     eventHandler: (LoginScreenEvent) -> Unit,
     onRegisterButtonClick: () -> Unit,
 ) {
@@ -66,18 +69,20 @@ private fun LoginIdleStateScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        TextField(
-            value = uiData.username,
+        OutlinedTextField(
+            label = { Text(stringResource(R.string.username_label)) },
+            value = username,
             onValueChange = {
                 eventHandler(LoginScreenEvent.EnterUsername(it))
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(
-            value = uiData.password,
-            onValueChange = {
+        PasswordTextField(
+            password = password,
+            onPasswordChange = {
                 eventHandler(LoginScreenEvent.EnterPassword(it))
-            }
+            },
+            label = stringResource(R.string.password)
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = {

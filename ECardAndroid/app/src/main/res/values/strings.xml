@@ -7,4 +7,16 @@
     <string name="login_button_text">Login</string>
     <string name="registration_button_text">Registration</string>
     <string name="register_button_text">Register</string>
+    <string name="password">Password</string>
+    <string name="hide_text">Hide text</string>
+    <string name="show_text">Show text</string>
+    <string name="username_label">Username</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="no_internet_connection_please_check_your_network_and_try_again">No internet connection. Please check your network and try again.</string>
+    <string name="request_timed_out_please_try_again">Request timed out. Please try again.</string>
+    <string name="unable_to_reach_the_server_please_check_your_internet_connection">Unable to reach the server. Please check your internet connection.</string>
+    <string name="an_unexpected_error_occurred_please_try_again">An unexpected error occurred. Please try again.</string>
+    <string name="username">Username</string>
+    <string name="passwords_don_t_match">Passwords don\'t match</string>
+    <string name="shouldn_t_be_empty">%1$s shouldn\'t be empty</string>
 </resources>
