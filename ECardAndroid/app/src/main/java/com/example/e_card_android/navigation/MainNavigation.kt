@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.e_card_android.ui.main.friendsscreen.FriendsScreen
 import com.example.e_card_android.ui.main.mainscreen.MainScreen
 import com.example.e_card_android.ui.main.usersscreen.UserScreen
 
@@ -16,6 +17,12 @@ fun MainNavigation(navController: NavHostController, innerPadding: PaddingValues
         }
         composable(Routes.SETTINGS.value) {
             UserScreen()
+        }
+        composable(Routes.PLAYERS.value) {
+            UserScreen()
+        }
+        composable(Routes.FRIENDS.value) {
+            FriendsScreen()
         }
     }
 }

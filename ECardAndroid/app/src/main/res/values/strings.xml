@@ -19,4 +19,12 @@
     <string name="username">Username</string>
     <string name="passwords_don_t_match">Passwords don\'t match</string>
     <string name="shouldn_t_be_empty">%1$s shouldn\'t be empty</string>
+    <string name="registration_error">Registration error</string>
+    <string name="login_error">Login error</string>
+    <string name="welcome_to_e_card_game">Welcome to E-Card game</string>
+    <string name="back_button_description">back button</string>
+    <string name="all_players">All players</string>
+    <string name="friends">Friends</string>
+    <string name="games">Games</string>
+    <string name="players_statistic">Players statistic</string>
 </resources>

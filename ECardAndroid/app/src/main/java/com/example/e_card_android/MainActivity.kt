@@ -5,17 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.rememberNavController
-import com.example.e_card_android.navigation.BottomNavigationBar
+import com.example.e_card_android.navigation.AppNavigationDrawer
 import com.example.e_card_android.navigation.MainNavigation
 import com.example.e_card_android.ui.theme.ECardAndroidTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,21 +27,40 @@ class MainActivity : ComponentActivity() {
         setContent {
             ECardAndroidTheme {
                 val navController = rememberNavController()
-                Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) }
-                ) { innerPadding ->
-                    MainNavigation(navController, innerPadding)
+                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val scope = rememberCoroutineScope()
+                AppNavigationDrawer(
+                    navController = navController,
+                    drawerState = drawerState
+                ) {
+                    Scaffold(
+                        floatingActionButton = {
+                            ExtendedFloatingActionButton(
+                                text = { Text("Show drawer") },
+                                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                                onClick = {
+                                    scope.launch {
+                                        drawerState.apply {
+                                            if (isClosed) open() else close()
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    ) { innerPadding ->
+                        MainNavigation(navController, innerPadding)
+                    }
                 }
             }
         }
     }
 
-    private fun goToAuthActivity(){
+    private fun goToAuthActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
-    private fun goToGameActivity(){
+    private fun goToGameActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }

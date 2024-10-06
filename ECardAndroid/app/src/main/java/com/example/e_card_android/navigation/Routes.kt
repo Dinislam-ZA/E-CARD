@@ -5,5 +5,7 @@ enum class Routes(val value: String) {
     SETTINGS("settings"),
     GAME("game"),
     LOGIN("login"),
-    REGISTER("register")
+    REGISTER("register"),
+    PLAYERS("players"),
+    FRIENDS("friends")
 }
