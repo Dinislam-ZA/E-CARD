@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -21,10 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.e_card_android.R
 import com.example.e_card_android.ui.common.composables.ErrorAlertDialog
 import com.example.e_card_android.ui.common.composables.LoadingState
 import com.example.e_card_android.ui.common.composables.PasswordTextField
+import com.example.e_card_android.ui.common.viewmodel.FieldState
+import com.example.e_card_android.ui.common.viewmodel.FieldValidationState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -36,18 +38,23 @@ fun LoginScreen(
     val state = viewModel.state.collectAsState()
 
     val openAlertDialog = remember { mutableStateOf(false) }
+
     when (state.value) {
-        is LoginScreenState.Error -> LoginErrorStateScreen(
-            openAlertDialog,
-            onConfirmation = {
-                viewModel.eventHandler(LoginScreenEvent.TryAgain)
-            })
-        is LoginScreenState.Idle -> LoginIdleStateScreen(
-            viewModel.username,
-            viewModel.password,
-            eventHandler = {
-                viewModel.eventHandler(it)
-            },
+        is LoginScreenState.Error -> {
+            openAlertDialog.value = true
+            LoginErrorStateScreen(
+                openAlertDialog = openAlertDialog,
+                errorText = (state.value as LoginScreenState.Error).message,
+                onConfirmation = {
+                    viewModel.eventHandler(LoginScreenEvent.TryAgain)
+                }
+            )
+        }
+
+        LoginScreenState.Idle -> LoginIdleStateScreen(
+            username = viewModel.username,
+            password = viewModel.password,
+            eventHandler = { viewModel.eventHandler(it) },
             onRegisterButtonClick = onRegisterButtonClick
         )
 
@@ -58,8 +65,8 @@ fun LoginScreen(
 
 @Composable
 private fun LoginIdleStateScreen(
-    username: String,
-    password: String,
+    username: FieldState,
+    password: FieldState,
     eventHandler: (LoginScreenEvent) -> Unit,
     onRegisterButtonClick: () -> Unit,
 ) {
@@ -69,16 +76,25 @@ private fun LoginIdleStateScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Text(text = stringResource(R.string.welcome_to_e_card_game), fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(48.dp))
         OutlinedTextField(
             label = { Text(stringResource(R.string.username_label)) },
-            value = username,
+            value = username.value,
+            supportingText = {
+                if (username.error is FieldValidationState.Error)
+                    Text(username.error.message)
+            },
+            isError = username.error !is FieldValidationState.Valid,
             onValueChange = {
                 eventHandler(LoginScreenEvent.EnterUsername(it))
             }
         )
         Spacer(modifier = Modifier.height(24.dp))
         PasswordTextField(
-            password = password,
+            password = password.value,
+            supportingText = if (password.error is FieldValidationState.Error) password.error.message else "",
+            isError = password.error !is FieldValidationState.Valid,
             onPasswordChange = {
                 eventHandler(LoginScreenEvent.EnterPassword(it))
             },
@@ -98,11 +114,15 @@ private fun LoginIdleStateScreen(
 }
 
 @Composable
-fun LoginErrorStateScreen(openAlertDialog: MutableState<Boolean>, onConfirmation: () -> Unit) {
+fun LoginErrorStateScreen(
+    openAlertDialog: MutableState<Boolean>,
+    errorText: String,
+    onConfirmation: () -> Unit
+) {
     if (openAlertDialog.value) {
         ErrorAlertDialog(
-            dialogTitle = "Registration error",
-            dialogText = "Error while registration was occured. Check yout internet connection and try again",
+            dialogTitle = stringResource(R.string.login_error),
+            dialogText = errorText,
             onConfirmation = onConfirmation
         )
     }
