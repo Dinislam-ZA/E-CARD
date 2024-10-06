@@ -54,4 +54,6 @@ class SecurePreferences(context: Context) {
             apply()
         }
     }
+
+    fun isLoggedIn(): Boolean = (getToken() != null)
 }
