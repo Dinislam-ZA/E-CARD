@@ -1,5 +1,7 @@
 package com.example.e_card_android.navigation
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -53,6 +55,7 @@ fun AppNavigationDrawer(
             ModalDrawerSheet {
                 Text("E-Card game", modifier = Modifier.padding(16.dp))
                 HorizontalDivider()
+                Spacer(Modifier.height(4.dp))
                 items.forEach { item ->
                     NavigationDrawerItem(
                         label = { Text(item.title) },

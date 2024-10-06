@@ -73,7 +73,11 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     //glide
+    // TODO: Убрать
     implementation(libs.github.glide)
+
+    //coil
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

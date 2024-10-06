@@ -13,16 +13,16 @@ import com.example.e_card_android.ui.main.usersscreen.UserScreen
 fun MainNavigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = Routes.HOME.value) {
         composable(Routes.HOME.value) {
-            MainScreen()
+            MainScreen(paddingValues = innerPadding)
         }
         composable(Routes.SETTINGS.value) {
-            UserScreen()
+            UserScreen(paddingValues = innerPadding)
         }
         composable(Routes.PLAYERS.value) {
-            UserScreen()
+            UserScreen(paddingValues = innerPadding)
         }
         composable(Routes.FRIENDS.value) {
-            FriendsScreen()
+            FriendsScreen(paddingValues = innerPadding)
         }
     }
 }

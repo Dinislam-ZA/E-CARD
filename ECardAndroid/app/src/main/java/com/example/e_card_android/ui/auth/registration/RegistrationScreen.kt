@@ -5,6 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,7 +35,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun RegistrationScreen(
     viewModel: RegistrationViewModel = koinViewModel(),
-    onSucceedRegistration: () -> Unit
+    onSucceedRegistration: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val state = viewModel.state.collectAsState()
 
@@ -53,6 +60,7 @@ fun RegistrationScreen(
             eventHandler = {
                 viewModel.eventHandler(it)
             },
+            onNavigateBack = onNavigateBack,
         )
 
         RegistrationScreenState.Loading -> LoadingState()
@@ -66,50 +74,69 @@ fun RegistrationScreenIdleState(
     password: FieldState,
     repeatPassword: FieldState,
     eventHandler: (RegistrationScreenEvent) -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top,
     ) {
-        OutlinedTextField(
-            label = { Text(stringResource(R.string.username_label)) },
-            value = username.value,
-            supportingText = {
-                if (username.error is FieldValidationState.Error)
-                    Text(username.error.message)
-            },
-            isError = username.error !is FieldValidationState.Valid,
-            onValueChange = {
-                eventHandler(RegistrationScreenEvent.EnterUsername(it))
+        Spacer(modifier = Modifier.height(16.dp))
+        IconButton(
+            onClick = onNavigateBack,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                contentDescription = stringResource(R.string.back_button_description)
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            OutlinedTextField(
+                label = { Text(stringResource(R.string.username_label)) },
+                value = username.value,
+                supportingText = {
+                    if (username.error is FieldValidationState.Error)
+                        Text(username.error.message)
+                },
+                isError = username.error !is FieldValidationState.Valid,
+                onValueChange = {
+                    eventHandler(RegistrationScreenEvent.EnterUsername(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            PasswordTextField(
+                password = password.value,
+                supportingText = if (password.error is FieldValidationState.Error) password.error.message else "",
+                isError = password.error !is FieldValidationState.Valid,
+                onPasswordChange = {
+                    eventHandler(RegistrationScreenEvent.EnterPassword(it))
+                },
+                label = stringResource(R.string.password)
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            PasswordTextField(
+                password = repeatPassword.value,
+                supportingText = if (repeatPassword.error is FieldValidationState.Error) repeatPassword.error.message else "",
+                isError = repeatPassword.error !is FieldValidationState.Valid,
+                onPasswordChange = {
+                    eventHandler(RegistrationScreenEvent.EnterRepeatedPassword(it))
+                },
+                label = stringResource(R.string.repeat_password)
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            OutlinedButton(onClick = {
+                eventHandler(RegistrationScreenEvent.TryRegister)
+            }) {
+                Text(text = stringResource(R.string.register_button_text))
             }
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        PasswordTextField(
-            password = password.value,
-            supportingText = if (password.error is FieldValidationState.Error) password.error.message else "",
-            isError = password.error !is FieldValidationState.Valid,
-            onPasswordChange = {
-                eventHandler(RegistrationScreenEvent.EnterPassword(it))
-            },
-            label = stringResource(R.string.password)
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        PasswordTextField(
-            password = repeatPassword.value,
-            supportingText = if (repeatPassword.error is FieldValidationState.Error) repeatPassword.error.message else "",
-            isError = repeatPassword.error !is FieldValidationState.Valid,
-            onPasswordChange = {
-                eventHandler(RegistrationScreenEvent.EnterRepeatedPassword(it))
-            },
-            label = stringResource(R.string.repeat_password)
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        OutlinedButton(onClick = {
-            eventHandler(RegistrationScreenEvent.TryRegister)
-        }) {
-            Text(text = stringResource(R.string.register_button_text))
         }
     }
 }
@@ -122,7 +149,7 @@ fun RegistrationScreenErrorState(
 ) {
     if (openAlertDialog.value) {
         ErrorAlertDialog(
-            dialogTitle = "Registration error",
+            dialogTitle = stringResource(R.string.registration_error),
             dialogText = errorText,
             onConfirmation = onConfirmation
         )

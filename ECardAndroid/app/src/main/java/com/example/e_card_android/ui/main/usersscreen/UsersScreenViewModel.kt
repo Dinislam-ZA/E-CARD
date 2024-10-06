@@ -1,17 +1,33 @@
 package com.example.e_card_android.ui.main.usersscreen
 
-import com.example.e_card_android.data.model.User
+import androidx.lifecycle.viewModelScope
 import com.example.e_card_android.data.repositories.UserRepository
 import com.example.e_card_android.ui.common.viewmodel.MVIBaseViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class UsersScreenViewModel(val repository: UserRepository): MVIBaseViewModel<UsersScreenEvent, UsersScreenState>(UsersScreenState.Loading) {
+class UsersScreenViewModel(private val repository: UserRepository) :
+    MVIBaseViewModel<UsersScreenEvent, UsersScreenState>(UsersScreenState.Loading) {
 
-    private val _uiData = MutableStateFlow(listOf<User>())
-    val uiData = _uiData.asStateFlow()
+    init {
+        eventHandler(UsersScreenEvent.LoadUsersList)
+    }
 
     override fun eventHandler(event: UsersScreenEvent) {
-        TODO("Not yet implemented")
+        when (event) {
+            UsersScreenEvent.LoadUsersList -> getAllPlayers()
+        }
     }
+
+    private fun getAllPlayers() {
+        viewModelScope.launch {
+            try {
+                _state.value = UsersScreenState.Loading
+                val users = repository.getAllUsers().sortedByDescending { it.money }
+                _state.value = UsersScreenState.Success(users)
+            } catch (e: Exception) {
+                _state.value = UsersScreenState.Error
+            }
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+coilCompose = "2.6.0"
 glideVersion = "4.16.0"
 koinBom = "3.5.5"
 koinVersion = "3.5.4"
@@ -24,6 +25,7 @@ constraintlayout = "2.1.4"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navVersion" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 github-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glideVersion" }
 insert-koin-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinVersion" }
 insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinVersion" }
