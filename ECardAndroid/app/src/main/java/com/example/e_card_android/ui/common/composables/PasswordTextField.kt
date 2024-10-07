@@ -1,6 +1,5 @@
 package com.example.e_card_android.ui.common.composables
 
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField

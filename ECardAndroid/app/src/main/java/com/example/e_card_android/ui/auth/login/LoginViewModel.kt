@@ -11,7 +11,6 @@ import com.example.e_card_android.ui.common.viewmodel.FieldValidationState
 import com.example.e_card_android.ui.common.viewmodel.MVIBaseViewModel
 import com.example.e_card_android.utils.ResourceProvider
 import io.ktor.utils.io.errors.IOException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

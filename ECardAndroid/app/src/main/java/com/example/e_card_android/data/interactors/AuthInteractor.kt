@@ -2,8 +2,6 @@ package com.example.e_card_android.data.interactors
 
 import com.example.e_card_android.data.shared_preference.SecurePreferences
 import io.ktor.http.HttpStatusCode
-import io.ktor.utils.io.errors.IOException
-import kotlinx.coroutines.TimeoutCancellationException
 
 
 interface AuthInteractor {
