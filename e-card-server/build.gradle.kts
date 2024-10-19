@@ -27,6 +27,12 @@ repositories {
 }
 
 dependencies {
+
+    //koin
+    val koin_version = "4.0.0"
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+
     implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-auth-jwt")
 
@@ -35,6 +41,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
 
     implementation("org.mindrot:jbcrypt:0.4")
+
+    implementation("redis.clients:jedis:5.1.0")
 
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-core-jvm")

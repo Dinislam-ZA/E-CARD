@@ -1,11 +1,7 @@
 package example.com.plugins
 
-import example.com.model.UserRepositoryImpl
-import example.com.model.Users
-import io.ktor.http.*
+import example.com.data.db.model.Users
 import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
