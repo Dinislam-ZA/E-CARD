@@ -2,6 +2,7 @@ package example.com.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import example.com.data.db.model.UserPrinciples
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -24,7 +25,10 @@ fun Application.configureSecurity() {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                val userId = credential.payload.getClaim("userId").asInt()
+                val username = credential.payload.getClaim("username").asString()
+
+                if (credential.payload.audience.contains(jwtAudience)) UserPrinciples(userId, username) else null
             }
         }
     }

@@ -1,5 +1,6 @@
 package example.com.plugins
 
+import example.com.data.db.model.Friends
 import example.com.data.db.model.Users
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
@@ -10,15 +11,9 @@ fun Application.configureDatabases() {
     connectToPostgres(embedded = false)
 
     transaction {
-        SchemaUtils.create(Users)
+        // SchemaUtils.drop(Users, Friends)
+        SchemaUtils.create(Users, Friends)
     }
-    
-//    routing {
-//        get("/users") {
-//            val repository = UserRepositoryImpl()
-//            call.respond(HttpStatusCode.OK, repository.allUsers())
-//        }
-//    }
 }
 
 fun Application.connectToPostgres(embedded: Boolean) {
