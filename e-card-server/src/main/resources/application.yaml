@@ -13,3 +13,8 @@ db:
   url: "jdbc:postgresql://db:5432/ktor_db"
   user: "myuser"
   password: "mypassword"
+redis:
+  host: "redis"
+  port: 6379
+
+

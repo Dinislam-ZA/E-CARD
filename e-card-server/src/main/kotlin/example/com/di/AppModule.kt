@@ -1,12 +1,13 @@
 package example.com.di
 
-import example.com.data.db.repositories.UserRepository
-import example.com.data.db.repositories.UserRepositoryImpl
-import example.com.services.UserService
-import example.com.services.UserServiceImpl
+import example.com.plugins.RedisConfig
+import example.com.data.redis.FriendshipRedisManager
+import example.com.data.redis.GamesRedisManager
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val appModule = module {
-    single<UserRepository> { UserRepositoryImpl() }
-    single<UserService> {UserServiceImpl(get())}
+// TODO: Вряд ли это можно назвать appModule, надо бы переименовать
+fun appModule(redisConfig: RedisConfig) = module {
+    single<FriendshipRedisManager>(named("friends")) { FriendshipRedisManager(redisConfig.host, redisConfig.port) }
+    single<GamesRedisManager>(named("games")) { GamesRedisManager(redisConfig.host, redisConfig.port) }
 }
