@@ -3,10 +3,7 @@ package example.com.plugins
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import example.com.data.db.model.User
-import example.com.data.dto.AcceptFriendRequest
-import example.com.data.dto.AddFriendRequest
-import example.com.data.dto.LoginRequest
-import example.com.data.dto.RegistrationRequest
+import example.com.data.db.model.dto.*
 import example.com.services.UserService
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -32,16 +29,21 @@ fun Application.configureRouting() {
         post("/login") {
             val loginRequest = call.receive<LoginRequest>()
 
+            this@configureRouting.log.info(loginRequest.password)
+
             val user = userService.findUserByName(loginRequest.username)
+            this@configureRouting.log.info(user.toString())
             if (user != null && BCrypt.checkpw(loginRequest.password, user.password)) {
                 val token = JWT.create()
                     .withAudience(jwtAudience)
                     .withIssuer(jwtDomain)
+                    .withClaim("userId", user.id)
                     .withClaim("username", user.username)
                     .withExpiresAt(Date(System.currentTimeMillis() + 600000 * 12))
                     .sign(Algorithm.HMAC256(jwtSecret))
 
-                call.respond(mapOf("token" to token, "id" to user.id))
+                val response = LoginResponse(token, user.toUserVO())
+                call.respond(HttpStatusCode.OK, response)
             } else {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid username or password")
             }
@@ -49,6 +51,8 @@ fun Application.configureRouting() {
 
         post("/register") {
             val registerRequest = call.receive<RegistrationRequest>()
+
+            this@configureRouting.log.info("username = ${registerRequest.username}, password = ${registerRequest.password}")
 
             val newUser = User(
                 username = registerRequest.username,
@@ -70,13 +74,15 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.OK, "Friendship request was sent")
             }
 
+            // TODO: Вынести try-catch
             post("/friends/accept") {
-                val friendAcceptRequest = call.receive<AcceptFriendRequest>()
-                val res = userService.acceptFriendRequest(friendAcceptRequest.user1, friendAcceptRequest.user2)
-                if (res) call.respond(
-                    HttpStatusCode.OK,
-                    "Friendship accepted"
-                ) else call.respond(HttpStatusCode.BadRequest, "Can't accept friendship")
+                try {
+                    val friendAcceptRequest = call.receive<AcceptFriendRequest>()
+                    userService.acceptFriendRequest(friendAcceptRequest.user1, friendAcceptRequest.user2)
+                } catch (e: Exception) {
+                    println(e.message)
+                    call.respond(HttpStatusCode.BadRequest, "Can't accept friendship")
+                }
             }
 
             get("/friends/{userId}") {
@@ -92,15 +98,17 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.OK, friends)
             }
 
-            // TODO
+            // TODO: Нахуй он мне вообще тут нужен
             get("/friends/requests/{userId}") {
                 val userId = call.parameters["userId"]?.toIntOrNull()
 
-                if (userId == null){
+                if (userId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid user ID")
                     return@get
                 }
 
+                val userFriendshipRequests = userService.getFriendRequests(userId)
+                call.respond(HttpStatusCode.OK, userFriendshipRequests)
 
             }
 
