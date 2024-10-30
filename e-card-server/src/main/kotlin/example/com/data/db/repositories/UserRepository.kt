@@ -4,6 +4,7 @@ import example.com.data.*
 import example.com.data.db.model.*
 import example.com.suspendTransaction
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.mindrot.jbcrypt.BCrypt
 
 interface UserRepository {
@@ -14,8 +15,8 @@ interface UserRepository {
     suspend fun removeUser(id: Int): Boolean
     suspend fun updateUser(id: Int, username: String? = null, money: ULong? = null, avatarUri: String? = null): Boolean
     suspend fun addFriend(user1Id: Int, user2Id: Int)
-    suspend fun acceptFriend(user1Id: Int, user2Id: Int): Boolean
     suspend fun friendsList(userId: Int): List<User>
+    suspend fun removeFriend(user1Id: Int, user2Id: Int)
 }
 
 class UserRepositoryImpl : UserRepository {
@@ -74,17 +75,14 @@ class UserRepositoryImpl : UserRepository {
         Friends.insert {
             it[user1] = user1Id
             it[user2] = user2Id
-            it[status] = FriendshipStatus.Pending.status
         }
     }
 
-    override suspend fun acceptFriend(user1Id: Int, user2Id: Int) = suspendTransaction {
-        val updatedRows =
-            Friends.update({ (Friends.user1 eq user1Id) and (Friends.user2 eq user2Id) and (Friends.status eq FriendshipStatus.Pending.status) }) {
-                it[status] = FriendshipStatus.Accepted.status
-            }
-
-        updatedRows > 0
+    override suspend fun removeFriend(user1Id: Int, user2Id: Int): Unit = suspendTransaction {
+        Friends.deleteWhere {
+            (user1 eq user1Id and (user2 eq user2Id)) or
+                    (user1 eq user2Id and (user2 eq user1Id))
+        }
     }
 
     override suspend fun friendsList(userId: Int) = suspendTransaction {
