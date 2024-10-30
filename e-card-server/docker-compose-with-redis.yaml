@@ -10,6 +10,9 @@ services:
       - DATABASE_PASSWORD=mypassword
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    volumes:
+      - .:/app  # Подключаем текущую директорию (с кодом) как том к /app в контейнере
+    command: ./gradlew run  # Запуск приложения через Gradle
     depends_on:
       - db
       - redis
@@ -25,6 +28,7 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
 
   redis:
     image: redis:7
